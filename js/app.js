@@ -30,8 +30,44 @@
 /* STUDENT APPLICATION */
 $(function() {
     var attendance = JSON.parse(localStorage.attendance),
+        // Table body column elements containing the total days missed
         $allMissed = $('tbody .missed-col'),
+        // Table body columns elements containing all the attendance checkboxes
         $allCheckboxes = $('tbody input');
+
+    // Model
+    // Load the allMissed data into an array of objects.
+    // [index], name, daysMissed[], numMissed
+    // Write data to storage when data changes
+
+    var model = {
+        students: [
+            {
+                name: 'first student',
+                attendance: '[]',
+                daysMissed: ''
+            },
+            {
+                name: 'second student',
+                attendance: '[]',
+                daysMissed: ''
+            },
+           {
+                name: 'first student',
+                attendance: '[]',
+                daysMissed: ''
+            }
+         ],
+         // Add model methods here
+
+    };
+
+    // Add an eventlistener for whenever a student's daysMissed
+    // Checkbox is checked. Update the Model, count numMissed days,
+    // store, and update view
+
+    // Generate the view for each student from the Model data
+
 
     // Count a student's missed days
     function countMissing() {
