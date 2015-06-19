@@ -45,15 +45,15 @@ $(function() {
             {
                 name: 'first student',
                 // 0 = attended class, 1 = absent
-                attendance: [0, 1, 0, 0]
+                attendance: [0, 1, 0, 0, 1, 0, 0]
             },
             {
                 name: 'second student',
-                attendance: [1, 0, 0, 1]
+                attendance: [1, 0, 0, 1, 1, 0, 0]
             },
            {
                 name: 'third student',
-                attendance: [0, 1, 0, 0]
+                attendance: [0, 1, 0, 0, 1, 0, 0]
             }
          ],
          // Add model methods here
@@ -88,21 +88,44 @@ $(function() {
 
     var view = {
         init: function(data) {
-            this.tableHead = $('#table-head');
+            this.tableHead = $('#table-1');
             // generate the table
             // data.length is the number of students. One more row for th
             // data[i].name goes in the first column
             // data[i].attendance.length is the number of days and checkbox columns to show
             // data[i].daysMissed has its own column at the end
-            var htmlStr = '<table><thead><tr>';
+
+            // Add table head
+            var htmlStr = '<thead><tr>';
             htmlStr += '<th class="name-col">Student Name</th>';
             data[0].attendance.forEach(function(absent, index){
                 htmlStr += '<th>' + (index + 1) + '</th>';
-            })
+            });
             htmlStr += '<th class="missed-col">Days Missed</th>';
-            htmlStr += '</tr></thead></table>';
+            htmlStr += '</tr>';
+            htmlStr += '</thead>';
+            htmlStr += '<tbody>';
+
+            // Add student rows
+            htmlStr += '<tr class="student">';
+            data.forEach(function(student, index, array){
+                htmlStr += '<td class="name-col">' + student.name + '</td>';
+                array[index].attendance.forEach(function(absent, index2){
+                    var checkVal = '';
+                    htmlStr += '<td class="attend-col"><input ';
+                    htmlStr += 'id="' + index + '-' + index2 + '"';
+                    if (absent === 1) {
+                        checkVal = 'checked';
+                    }
+                    htmlStr += ' type="checkbox" ' + checkVal + ' ></td>';
+                    // htmlStr += ' type="checkbox" checked></td>';
+
+                });
+                htmlStr += '<td class="missed-col">' + data[index].daysMissed + '</td>';
+                htmlStr += '</tr>';
+            });
+            htmlStr += '</tbody>';
             this.tableHead.html(htmlStr);
-            console.log("got here");
         }
     };
 
@@ -160,7 +183,6 @@ $(function() {
     //     localStorage.attendance = JSON.stringify(newAttendance);
     // });
     model.getData();
-    model.setAttendance(0, 2, 1);
     controller.init();
     // countMissing();
 }());
