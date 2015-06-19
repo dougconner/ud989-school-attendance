@@ -70,19 +70,27 @@ $(function() {
                 }
                 studentData.push(student);
             });
-            console.log("studentData = ", studentData);
+            // console.log("studentData = ", studentData);
             return studentData;
          },
          setAttendance: function(index, day, absent) {
             // student index, day of class counting from 0, absent = 1, present = 0
             this.students[index].attendance[day] = absent;
-            console.log("studentData = " + this.students[index].attendance);
          }
-
     };
     var controller = {
         init: function() {
             view.init(model.getData());
+        },
+        getAttendanceChange: function() {
+            var data = [];
+            model.students.forEach(function(student, index){
+                console.log('getAttendanceChange index = ' + index);
+            });
+        },
+        clickUpdate: function(data) {
+            model.setAttendance(data.index, data.day, data.absent);
+            view.renderMissed(model.getData());
         }
     };
 
@@ -107,8 +115,8 @@ $(function() {
             htmlStr += '<tbody>';
 
             // Add student rows
-            htmlStr += '<tr class="student">';
             data.forEach(function(student, index, array){
+                htmlStr += '<tr id="student-' + index + '" class="student">';
                 htmlStr += '<td class="name-col">' + student.name + '</td>';
                 array[index].attendance.forEach(function(absent, index2){
                     var checkVal = '';
@@ -121,11 +129,36 @@ $(function() {
                     // htmlStr += ' type="checkbox" checked></td>';
 
                 });
-                htmlStr += '<td class="missed-col">' + data[index].daysMissed + '</td>';
+                htmlStr += '<td id="col-missed-' + index + '" class="missed-col">' + data[index].daysMissed + '</td>';
                 htmlStr += '</tr>';
             });
             htmlStr += '</tbody>';
             this.tableHead.html(htmlStr);
+
+            // Add event listeners to each checkbox
+            data.forEach(function(student, index, array){
+                array[index].attendance.forEach(function(absent, index2){
+                    $('#' + index + '-' + index2).get(0).addEventListener('click', (function(indexCopy, index2Copy){
+                        return function() {
+                            var clickData = {};
+                            clickData.index = indexCopy;
+                            clickData.day = index2Copy;
+                            clickData.absent = $('#' + indexCopy + '-' + index2Copy + ':checked').val();
+                            if (clickData.absent === 'on') {
+                                clickData.absent = 1;
+                            } else {
+                                clickData.absent = 0;
+                            }
+                            controller.clickUpdate(clickData);
+                        };
+                    })(index, index2));
+                });
+            });
+        },
+        renderMissed: function(data) {
+            data.forEach(function(student, index){
+                $('#col-missed-' + index).text(data[index].daysMissed);
+            });
         }
     };
 
